@@ -1,19 +1,41 @@
+import { defineConfig } from "vite";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import viteReact from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import tsConfigPaths from "vite-tsconfig-paths";
+import path from "path";
+import { fileURLToPath } from "url";
 
-import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  cloudflare: false,
-  tanstackStart: {
-    server: { entry: "server" },
+  plugins: [
+    tailwindcss(),
+    tsConfigPaths({ projects: ["./tsconfig.json"] }),
+    tanstackStart({
+      server: { entry: "server", preset: "vercel" }
+    }),
+    viteReact(),
+  ],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src")
+    },
+    dedupe: [
+      "react",
+      "react-dom",
+      "react/jsx-runtime",
+      "react/jsx-dev-runtime",
+      "@tanstack/react-query",
+      "@tanstack/query-core"
+    ]
   },
-  vite: {
-    environments: {
-      server: {
-        build: {
-          rollupOptions: {
-            output: {
-              inlineDynamicImports: true,
-            },
+  environments: {
+    server: {
+      build: {
+        rollupOptions: {
+          output: {
+            inlineDynamicImports: true,
           },
         },
       },

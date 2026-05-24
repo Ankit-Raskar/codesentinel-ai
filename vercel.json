@@ -1,7 +1,9 @@
 {
-  "cleanUrls": true,
-  "outputDirectory": "dist/client",
   "rewrites": [
+    {
+      "source": "/assets/(.*)",
+      "destination": "/client/assets/$1"
+    },
     {
       "source": "/(.*)",
       "destination": "/api/server"
