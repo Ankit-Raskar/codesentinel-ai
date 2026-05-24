@@ -146,11 +146,6 @@ npm run build
 Deploy instantly using:
 https://vercel.com/
 
-## Netlify
-
-Supports static deployment via:
-https://www.netlify.com/
-
 ---
 
 # Screens Included
