@@ -1,24 +1,51 @@
 import server from '../dist/server/server.js';
 
-export default async function handler(request) {
-  let url = new URL(request.url);
-  const invokePath = request.headers.get('x-invoke-path');
-  
-  if (invokePath) {
-    url.pathname = invokePath;
-  }
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
-  // Create a new request with the original path
-  const init = {
-    method: request.method,
-    headers: request.headers,
-  };
-  
-  if (request.method !== 'GET' && request.method !== 'HEAD') {
-    init.body = request.body;
-    init.duplex = 'half';
-  }
+export default async function handler(req, res) {
+  try {
+    const protocol = req.headers['x-forwarded-proto'] || 'http';
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const invokePath = req.headers['x-invoke-path'];
+    
+    const pathname = invokePath || req.url;
+    const fullUrl = new URL(pathname, `${protocol}://${host}`);
 
-  const modifiedRequest = new Request(url.href, init);
-  return server.fetch(modifiedRequest);
+    const init = {
+      method: req.method,
+      headers: req.headers,
+    };
+
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+      init.body = req;
+      init.duplex = 'half';
+    }
+
+    const webRequest = new Request(fullUrl.href, init);
+    const webResponse = await server.fetch(webRequest);
+
+    res.status(webResponse.status);
+    webResponse.headers.forEach((value, key) => {
+      res.setHeader(key, value);
+    });
+
+    if (webResponse.body) {
+      const reader = webResponse.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        res.write(value);
+      }
+      res.end();
+    } else {
+      res.end();
+    }
+  } catch (error) {
+    console.error("Vercel Serverless Error:", error);
+    res.status(500).send("Internal Server Error: " + error.stack);
+  }
 }
