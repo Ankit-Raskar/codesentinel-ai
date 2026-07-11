@@ -24,6 +24,7 @@ https://codesentinel-ai-gules.vercel.app/
 - Responsive design
 
 ---
+<img width="1884" height="911" alt="Screenshot 2026-07-11 174714" src="https://github.com/user-attachments/assets/292b487a-6bb4-4eb7-93ca-745e8e21ad05" />
 
 # Demo Workflow
 
