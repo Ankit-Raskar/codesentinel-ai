@@ -108,7 +108,7 @@ VITE_GROQ_API_KEY=your_groq_api_key
 Clone the repository:
 
 ```bash
-git clone https://https://github.com/Ankit-Raskar/codesentinel-ai.git
+git clone https:https://github.com/Ankit-Raskar/codesentinel-ai.git
 ```
 
 Go into the project:
